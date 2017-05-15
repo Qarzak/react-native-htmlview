@@ -62,6 +62,7 @@ class HtmlView extends Component {
       linkHandler: this.props.onLinkPress,
       styles: Object.assign({}, baseStyles, this.props.stylesheet),
       customRenderer: this.props.renderNode,
+      padding: this.props.padding,
     };
 
     htmlToElement(value, opts, (err, element) => {
