@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Text,
+  View,
 } from 'react-native';
 import htmlparser from 'htmlparser2-without-node-native';
 import entities from 'entities';
@@ -14,15 +15,15 @@ const BULLET = '\u2022 ';
 const Img = props => {
   const width = Number(props.attribs['width']) || Number(props.attribs['data-width']) || 0;
   const height = Number(props.attribs['height']) || Number(props.attribs['data-height']) || 0;
+  const padding = props.padding || 0;
 
   const imgStyle = {
     width,
     height,
+    padding,
   };
   const source = {
     uri: props.attribs.src,
-    width,
-    height,
   };
   return (
     <AutoSizedImage source={source} style={imgStyle} />
@@ -39,6 +40,10 @@ export default function htmlToElement(rawHtml, opts, done) {
         if (rendered || rendered === null) return rendered;
       }
 
+      if(node.data == '\n') {
+        return null;
+      }
+
       if (node.type == 'text') {
         return (
           <Text key={index} style={parent ? opts.styles[parent.name] : null}>
@@ -50,7 +55,7 @@ export default function htmlToElement(rawHtml, opts, done) {
       if (node.type == 'tag') {
         if (node.name == 'img') {
           return (
-            <Img key={index} attribs={node.attribs} />
+            <Img key={index} attribs={node.attribs} style={ opts.styles[node.name] } padding={ opts.padding } />
           );
         }
 
@@ -82,22 +87,44 @@ export default function htmlToElement(rawHtml, opts, done) {
           }
         }
 
+        if (node.name == 'ul' || node.name == 'ol') {
+          return (
+            <View style={ opts.styles[node.name] } key={index}>
+              {domToElement(node.children, node)}
+            </View>
+          );
+        }
+
         let listItemPrefix = null;
         if (node.name == 'li') {
           if (parent.name == 'ol') {
-            listItemPrefix = `${index + 1}. `;
+            listItemPrefix = `${(index + 1) / 2}. `;
           } else if (parent.name == 'ul') {
             listItemPrefix = BULLET;
           }
+          return(
+            <View style={ opts.styles[node.name] } key={index}>
+              <Text>
+                <Text>{listItemPrefix}</Text>
+                {domToElement(node.children, node)}
+              </Text>
+            </View>
+          );
+        }
+
+        if (node.parent == null)
+        {
+          return (
+            <View style={ opts.styles[node.name] } key={index} onPress={linkPressHandler}>
+              <Text>
+                {domToElement(node.children, node)}
+              </Text>
+            </View>
+          );
         }
 
         return (
-          <Text key={index} onPress={linkPressHandler}>
-            {linebreakBefore}
-            {listItemPrefix}
-            {domToElement(node.children, node)}
-            {linebreakAfter}
-          </Text>
+          domToElement(node.children, node)
         );
       }
     });
@@ -111,4 +138,3 @@ export default function htmlToElement(rawHtml, opts, done) {
   parser.write(rawHtml);
   parser.done();
 }
-
