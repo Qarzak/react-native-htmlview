@@ -31,10 +31,19 @@ const Img = props => {
 };
 
 export default function htmlToElement(rawHtml, opts, done) {
+
   function domToElement(dom, parent) {
     if (!dom) return null;
 
     return dom.map((node, index, list) => {
+
+
+      let linkPressHandler;
+      if(parent && parent.name == 'a' && node.type == 'text') {
+        linkPressHandler = () => opts.linkHandler(entities.decodeHTML(parent.attribs.href));
+      }
+
+
       if (opts.customRenderer) {
         const rendered = opts.customRenderer(node, index, list, parent, domToElement);
         if (rendered || rendered === null) return rendered;
@@ -46,7 +55,7 @@ export default function htmlToElement(rawHtml, opts, done) {
 
       if (node.type == 'text') {
         return (
-          <Text key={index} style={parent ? opts.styles[parent.name] : null}>
+          <Text onPress={linkPressHandler} key={index} style={parent ? opts.styles[parent.name] : null}>
             {entities.decodeHTML(node.data)}
           </Text>
         );
@@ -59,9 +68,10 @@ export default function htmlToElement(rawHtml, opts, done) {
           );
         }
 
-        let linkPressHandler = null;
-        if (node.name == 'a' && node.attribs && node.attribs.href) {
-          linkPressHandler = () => opts.linkHandler(entities.decodeHTML(node.attribs.href));
+        if (node.name == 'br') {
+          return (
+            <Text key={index}>{'\n'}</Text>
+          );
         }
 
         let linebreakBefore = null;
