@@ -113,8 +113,8 @@ export default function htmlToElement(rawHtml, opts, done) {
             listItemPrefix = BULLET;
           }
           return(
-            <View style={ opts.styles[node.name] } key={index}>
-              <Text>
+            <View key={index}>
+              <Text style={ opts.styles[node.name] }>
                 <Text>{listItemPrefix}</Text>
                 {domToElement(node.children, node)}
               </Text>
@@ -125,8 +125,8 @@ export default function htmlToElement(rawHtml, opts, done) {
         if (node.parent == null)
         {
           return (
-            <View style={ opts.styles[node.name] } key={index} onPress={linkPressHandler}>
-              <Text>
+            <View key={index} onPress={linkPressHandler}>
+              <Text style={ opts.styles[node.name] }>
                 {domToElement(node.children, node)}
               </Text>
             </View>
