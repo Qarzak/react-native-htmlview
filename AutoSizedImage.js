@@ -1,8 +1,6 @@
-import React from 'react';
-import {
-  Image,
-  Dimensions,
-} from 'react-native';
+import React, { Component } from 'react';
+import { Image, Dimensions } from 'react-native';
+import ZoomableImage from './ZoomableImage';
 
 const {width} = Dimensions.get('window');
 
@@ -10,7 +8,7 @@ const baseStyle = {
   backgroundColor: 'transparent',
 };
 
-export default class AutoSizedImage extends React.Component {
+export default class AutoSizedImage extends Component {
   constructor(props) {
     super(props);
     this.state = {
