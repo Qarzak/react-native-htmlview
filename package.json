@@ -23,8 +23,7 @@
     "react-addons-test-utils": "^15.4.2",
     "react-dom": "15.4.2",
     "react-native": "^0.42.0",
-    "react-test-renderer": "~15.4.0",
-    "react-native-transformable-image": "^0.0.18"
+    "react-test-renderer": "~15.4.0"
   },
   "jest": {
     "preset": "react-native"
@@ -48,6 +47,7 @@
   },
   "dependencies": {
     "entities": "^1.1.1",
-    "htmlparser2-without-node-native": "^3.9.0"
+    "htmlparser2-without-node-native": "^3.9.0",
+    "react-native-transformable-image": "^0.0.18"
   }
 }
